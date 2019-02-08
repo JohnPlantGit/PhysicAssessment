@@ -30,3 +30,19 @@ bool Circle::CheckCollision(PhysicsObject* other)
 
 	return false;
 }
+
+void Circle::ResolveCollision(Rigidbody* other)
+{
+	if (other->GetShape())
+	{
+		glm::vec2 normal = glm::normalize(other->GetPosition() - m_position);
+		glm::vec2 relativeVelocity = other->GetVelocity() - m_velocity;
+
+		float elasticity = 1;
+		float j = glm::dot(-(1 + elasticity) * relativeVelocity, normal) / glm::dot(normal, normal * (1 / m_mass + 1 / other->GetMass()));
+
+		glm::vec2 force = normal * j;
+
+		ApplyForceToActor(other, force);
+	}
+}

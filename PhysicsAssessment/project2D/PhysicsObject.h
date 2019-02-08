@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/ext.hpp>
 
+#define SHAPE_COUNT 3
 enum ShapeType
 {
 	LINE = 0,

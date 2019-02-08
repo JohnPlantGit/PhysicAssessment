@@ -20,6 +20,20 @@ public:
 	void SetTimeStep(const float timeStep) { m_timeStep = timeStep; }
 	float GetTimeStep() const { return m_timeStep; }
 
+	void CheckCollision();
+
+	static bool Line2Line(PhysicsObject* a, PhysicsObject* b);
+	static bool Line2Circle(PhysicsObject* a, PhysicsObject* b);
+	static bool Line2Square(PhysicsObject* a, PhysicsObject* b);
+	static bool Circle2Line(PhysicsObject* a, PhysicsObject* b);
+	static bool Circle2Circle(PhysicsObject* a, PhysicsObject* b);
+	static bool Circle2Square(PhysicsObject* a, PhysicsObject* b);
+	static bool Square2Line(PhysicsObject* a, PhysicsObject* b);
+	static bool Square2Circle(PhysicsObject* a, PhysicsObject* b);
+	static bool Square2Square(PhysicsObject* a, PhysicsObject* b);
+
+	
+
 protected:
 	glm::vec2 m_gravity;
 	float m_timeStep;
