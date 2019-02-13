@@ -1,5 +1,6 @@
 #pragma once
 #include "PhysicsObject.h"
+#include "CollisionArgs.h"
 
 class Rigidbody;
 
@@ -14,7 +15,7 @@ public:
 	virtual void Debug();
 	virtual void MakeGizmo();
 
-	void ResolveCollision(Rigidbody* other);
+	void ResolveCollision(Rigidbody* other, CollisionArgs cArgs);
 
 	glm::vec2 GetNormal() { return m_normal; }
 	float GetDistance() { return m_distanceToOrigin; }

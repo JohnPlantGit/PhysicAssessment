@@ -42,11 +42,11 @@ void Line::MakeGizmo()
 	aie::Gizmos::add2DLine(start, end, colour);
 }
 
-void Line::ResolveCollision(Rigidbody* other)
+void Line::ResolveCollision(Rigidbody* other, CollisionArgs cArgs)
 {
 	if (other->GetShape() == CIRCLE)
 	{
-		float elasticity = 1;
+		float elasticity = other->GetElasticity();
 		float j = glm::dot(-(1 + elasticity) * other->GetVelocity(), m_normal) / (1 / other->GetMass());
 
 		glm::vec2 force = m_normal * j;
@@ -55,7 +55,7 @@ void Line::ResolveCollision(Rigidbody* other)
 	}
 	else if (other->GetShape() == SQUARE)
 	{
-		float elasticity = 1;
+		float elasticity = other->GetElasticity();
 		float j = glm::dot(-(1 + elasticity) * other->GetVelocity(), m_normal) / (1 / other->GetMass());
 
 		glm::vec2 force = m_normal * j;

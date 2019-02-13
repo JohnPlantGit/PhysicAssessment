@@ -8,7 +8,7 @@ public:
 
 	virtual void MakeGizmo();
 	virtual bool CheckCollision(PhysicsObject* other);
-	virtual void ResolveCollision(Rigidbody* other);
+	virtual void ResolveCollision(Rigidbody* other, CollisionArgs cArgs);
 
 	float GetRadius() { return m_radius; }
 	glm::vec4 GetColour() { return m_colour; }

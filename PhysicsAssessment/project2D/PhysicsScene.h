@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/ext.hpp>
 #include <vector>
+class CollisionArgs;
 class PhysicsObject;
 
 class PhysicsScene
@@ -22,15 +23,15 @@ public:
 
 	void CheckCollision();
 
-	static bool Line2Line(PhysicsObject* a, PhysicsObject* b);
-	static bool Line2Circle(PhysicsObject* a, PhysicsObject* b);
-	static bool Line2Square(PhysicsObject* a, PhysicsObject* b);
-	static bool Circle2Line(PhysicsObject* a, PhysicsObject* b);
-	static bool Circle2Circle(PhysicsObject* a, PhysicsObject* b);
-	static bool Circle2Square(PhysicsObject* a, PhysicsObject* b);
-	static bool Square2Line(PhysicsObject* a, PhysicsObject* b);
-	static bool Square2Circle(PhysicsObject* a, PhysicsObject* b);
-	static bool Square2Square(PhysicsObject* a, PhysicsObject* b);
+	static CollisionArgs Line2Line(PhysicsObject* a, PhysicsObject* b);
+	static CollisionArgs Line2Circle(PhysicsObject* a, PhysicsObject* b);
+	static CollisionArgs Line2Square(PhysicsObject* a, PhysicsObject* b);
+	static CollisionArgs Circle2Line(PhysicsObject* a, PhysicsObject* b);
+	static CollisionArgs Circle2Circle(PhysicsObject* a, PhysicsObject* b);
+	static CollisionArgs Circle2Square(PhysicsObject* a, PhysicsObject* b);
+	static CollisionArgs Square2Line(PhysicsObject* a, PhysicsObject* b);
+	static CollisionArgs Square2Circle(PhysicsObject* a, PhysicsObject* b);
+	static CollisionArgs Square2Square(PhysicsObject* a, PhysicsObject* b);
 
 	
 

@@ -3,6 +3,9 @@
 #include "Application.h"
 #include "Renderer2D.h"
 #include "PhysicsScene.h"
+#include <vector>
+
+class Line;
 
 class Application2D : public aie::Application 
 {
@@ -26,4 +29,8 @@ protected:
 	float m_timer;
 
 	PhysicsScene* m_physicsScene;
+	std::vector<Line*> m_lines;
+	bool m_m1Pressed;
+	glm::vec2 m_newLinePos;
+	glm::vec2 m_newLineNormal;
 };

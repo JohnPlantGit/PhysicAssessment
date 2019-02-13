@@ -22,14 +22,14 @@ bool Square::CheckCollision(PhysicsObject* other)
 	return true;
 }
 
-void Square::ResolveCollision(Rigidbody* other)
+void Square::ResolveCollision(Rigidbody* other, CollisionArgs cArgs)
 {
 	if (other->GetShape() == CIRCLE)
 	{
-		glm::vec2 normal = glm::normalize(other->GetPosition() - m_position);
+		glm::vec2 normal = cArgs.m_collisionNormal;
 		glm::vec2 relativeVelocity = other->GetVelocity() - m_velocity;
 
-		float elasticity = 1;
+		float elasticity = (m_elasticity + other->GetElasticity()) / 2;
 		float j = glm::dot(-(1 + elasticity) * relativeVelocity, normal) / glm::dot(normal, normal * (1 / m_mass + 1 / other->GetMass()));
 
 		glm::vec2 force = normal * j;
