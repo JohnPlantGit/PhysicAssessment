@@ -9,7 +9,10 @@
 #include "CollisionArgs.h"
 #include <math.h>
 
-PhysicsScene::PhysicsScene() : m_timeStep(0.01f), m_gravity(glm::vec2(0,0))
+
+glm::vec2 PhysicsScene::m_gravity = (glm::vec2(0, 0));
+
+PhysicsScene::PhysicsScene() : m_timeStep(0.01f) 
 {
 }
 
@@ -175,7 +178,6 @@ CollisionArgs PhysicsScene::Line2Square(PhysicsObject* a, PhysicsObject* b)
 
 	int inFront = 0;
 	int behind = 0;
-	float overlap = cornersToLine[0];
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -189,10 +191,21 @@ CollisionArgs PhysicsScene::Line2Square(PhysicsObject* a, PhysicsObject* b)
 		}
 	}
 
+	float overlap = cornersToLine[0];
+	for (int i = 1; i < 4; i++)
+	{
+		if (fabsf(overlap) > fabsf(cornersToLine[i]))
+		{
+			overlap = cornersToLine[i];
+		}
+	}
+
 	if (inFront != 0 && behind != 0)
 	{
 		output.m_collided = true;
 		output.m_collisionNormal = collisionNormal;
+
+		square->SetPosition(square->GetPosition() - (overlap * collisionNormal));
 
 		line->ResolveCollision(square, output);
 
@@ -226,6 +239,9 @@ CollisionArgs PhysicsScene::Circle2Line(PhysicsObject* a, PhysicsObject* b)
 
 			output.m_collided = true;
 			output.m_collisionNormal = collisionNormal;
+
+			glm::vec2 normalForce = (collisionNormal * fabsf(glm::dot(collisionNormal, m_gravity)));
+			output.m_normalForce = normalForce;
 
 			line->ResolveCollision(circle, output);
 			return output;
@@ -311,7 +327,7 @@ CollisionArgs PhysicsScene::Circle2Square(PhysicsObject* a, PhysicsObject* b)
 			output.m_collisionNormal = glm::normalize(cPos - square->GetPosition());
 		}
 
-		circle->SetPosition(cPos + (cPos - closestPoint));
+		circle->SetPosition(cPos + (glm::normalize(cPos - closestPoint) * (circle->GetRadius() - glm::length(distance))));
 
 		square->ResolveCollision(circle, output);
 
@@ -332,5 +348,54 @@ CollisionArgs PhysicsScene::Square2Circle(PhysicsObject* a, PhysicsObject* b)
 
 CollisionArgs PhysicsScene::Square2Square(PhysicsObject* a, PhysicsObject* b)
 {
-	return false;
+	Square* squareA = dynamic_cast<Square*>(a);
+	Square* squareB = dynamic_cast<Square*>(b);
+	CollisionArgs output;
+
+	if (glm::all(glm::lessThan(squareA->GetMin(), squareB->GetMax())) && glm::all(glm::greaterThan(squareA->GetMax(), squareB->GetMin())))
+	{
+		std::vector<float> overlap;
+		std::vector<glm::vec2> direction;
+		if (squareA->GetMin().x < squareB->GetMax().x) // left
+		{
+			overlap.push_back(fabsf(squareA->GetMin().x - squareB->GetMax().x));
+			direction.push_back(glm::vec2(-1, 0));
+		}
+		if (squareA->GetMax().x > squareB->GetMin().x) // right
+		{
+			overlap.push_back(fabsf(squareA->GetMax().x - squareB->GetMin().x));
+			direction.push_back(glm::vec2(1, 0));
+		}
+		if (squareA->GetMin().y < squareB->GetMax().y) // down
+		{
+			overlap.push_back(fabsf(squareA->GetMin().y - squareB->GetMax().y));
+			direction.push_back(glm::vec2(0, -1));
+		}
+		if (squareA->GetMax().y > squareB->GetMin().y) // up
+		{
+			overlap.push_back(fabsf(squareA->GetMax().y - squareB->GetMin().y));
+			direction.push_back(glm::vec2(0, 1));
+		}
+
+		int smallestIndex = 0;
+
+		for (int i = 1; i < overlap.size(); i++)
+		{
+			if (overlap[smallestIndex] > overlap[i])
+			{
+				smallestIndex = i;
+			}
+		}
+
+		output.m_collided = true;
+		output.m_collisionNormal = direction[smallestIndex];
+
+		squareB->SetPosition(squareB->GetPosition() + direction[smallestIndex] * overlap[smallestIndex]);
+
+		squareA->ResolveCollision(squareB, output);
+
+		return output;
+	}
+
+	return output;
 }

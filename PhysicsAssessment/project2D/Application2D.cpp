@@ -29,14 +29,14 @@ bool Application2D::startup()
 	aie::Gizmos::create(255U, 255U, 65535U, 65535U);
 	
 	m_physicsScene = new PhysicsScene();
-	m_physicsScene->SetGravity(glm::vec2(0, -100));
+	m_physicsScene->SetGravity(glm::vec2(0, 0));
 
-	Circle* ball = new Circle(glm::vec2(-49, -49), glm::vec2(0, 0), 2.0f, 2, glm::vec4(0, 1, 0, 1));
+	Circle* ball = new Circle(glm::vec2(-50, 5), glm::vec2(0, 0), 2, 2, glm::vec4(0, 1, 0, 1));
 	//ball->SetElasticity(0.2f);
 	//ball->SetLinearDrag(0.3f);
-	ball->SetKinematic(true);
-	Circle* ball2 = new Circle(glm::vec2(-48, -30), glm::vec2(0, 0), 2, 2, glm::vec4(1, 0, 0, 1));
-	//ball2->SetElasticity(0.2f);
+	//ball->SetKinematic(true);
+	Circle* ball2 = new Circle(glm::vec2(50, 5), glm::vec2(0, 0), 2, 2, glm::vec4(1, 0, 0, 1));
+	ball2->SetElasticity(0.3f);
 	//ball2->SetLinearDrag(0.3f);
 	Line* line1 = new Line(glm::vec2(0, -1), -50);
 	Line* line2 = new Line(glm::vec2(0, 1), -50);
@@ -44,25 +44,37 @@ bool Application2D::startup()
 	Line* line4 = new Line(glm::vec2(1, 0), -90);
 	Line* line5 = new Line(glm::vec2(-0.707, 0.707), -40);
 	m_physicsScene->AddActor(ball);
-	m_physicsScene->AddActor(ball2);
+	//m_physicsScene->AddActor(ball2);
 	m_physicsScene->AddActor(line1);
 	m_physicsScene->AddActor(line2);
 	m_physicsScene->AddActor(line3);
 	m_physicsScene->AddActor(line4);
-	m_physicsScene->AddActor(line5);
+	//m_physicsScene->AddActor(line5);
 
-	const int ballCount = 20;
+	Square* square = new Square(glm::vec2(50, 5), glm::vec2(0, 0), 2, 10, 10, glm::vec4(0, 0, 1, 1));
+	square->SetKinematic(true);
+	square->SetElasticity(0);
+	m_physicsScene->AddActor(square);
+	Square* square2 = new Square(glm::vec2(50, -10), glm::vec2(0, 10), 2, 5, 5, glm::vec4(0, 0, 1, 1));
+	square2->SetElasticity(0);
+	m_physicsScene->AddActor(square2);
+	Square* square3 = new Square(glm::vec2(50, 20), glm::vec2(0, -10), 2, 5, 5, glm::vec4(0, 0, 1, 1));
+	square3->SetElasticity(0);
+	m_physicsScene->AddActor(square3);
+	Square* square4 = new Square(glm::vec2(35, 5), glm::vec2(10, 0), 2, 5, 5, glm::vec4(0, 0, 1, 1));
+	square4->SetElasticity(0);
+	m_physicsScene->AddActor(square4);
+	Square* square5 = new Square(glm::vec2(65, 5), glm::vec2(-10, 0), 2, 5, 5, glm::vec4(0, 0, 1, 1));
+	square5->SetElasticity(0);
+	m_physicsScene->AddActor(square5);
+
+	const int ballCount = 0;
 
 	for (int i = 0; i < ballCount; i++)
 	{
 		Circle* newBall = new Circle(glm::vec2(-40 + i * 3, i * 3), glm::vec2(30, 30), 2.0f, 2, glm::vec4(1, 0, 0, 1));
 		m_physicsScene->AddActor(newBall);
 	}
-
-	Square* square = new Square(glm::vec2(-20, -30), glm::vec2(0, 0), 500, 10, 10, glm::vec4(0, 0, 1, 1));
-	square->SetKinematic(true);
-	//square->SetElasticity(0.5f);
-	m_physicsScene->AddActor(square);
 
 	return true;
 }
@@ -85,6 +97,10 @@ void Application2D::update(float deltaTime)
 	m_physicsScene->Update(deltaTime);
 	m_physicsScene->UpdateGizmos();
 
+	glm::vec2 mousePos(input->getMouseX(), input->getMouseY());
+	mousePos -= glm::vec2(640, 360);
+	mousePos *= (100.0f / 640.0f);
+
 	if (input->wasMouseButtonReleased(0) && m_m1Pressed)
 	{
 		glm::vec2 parallel(m_newLineNormal.y, -m_newLineNormal.x);
@@ -104,10 +120,6 @@ void Application2D::update(float deltaTime)
 	}
 	if (input->isMouseButtonDown(0) && m_m1Pressed)
 	{
-		glm::vec2 mousePos(input->getMouseX(), input->getMouseY());
-		mousePos -= glm::vec2(640, 360);
-		mousePos *= (100.0f / 640.0f);
-
 		m_newLineNormal = glm::normalize(mousePos - m_newLinePos);
 		glm::vec2 parallel(m_newLineNormal.y, -m_newLineNormal.x);
 
@@ -122,13 +134,28 @@ void Application2D::update(float deltaTime)
 	}
 	if (input->wasMouseButtonPressed(0))
 	{
-		m_m1Pressed = true;
-
-		glm::vec2 mousePos(input->getMouseX(), input->getMouseY());
-		mousePos -= glm::vec2(640, 360);
-		mousePos *= (100.0f / 640.0f);
+		m_m1Pressed = true;		
 
 		m_newLinePos = mousePos;
+	}
+	if (input->wasMouseButtonReleased(1) && m_m2Pressed)
+	{
+		Circle* newball = new Circle(m_newBallPos, m_newBallDirection, 2, 2, glm::vec4(1, 1, 1, 1));
+		m_physicsScene->AddActor(newball);
+	}
+	if (input->isMouseButtonDown(1) && m_m2Pressed)
+	{
+		m_newBallDirection = mousePos - m_newBallPos;
+
+		glm::vec2 parallel(m_newBallDirection.y, -m_newBallDirection.x);
+
+		aie::Gizmos::add2DLine(m_newBallPos, m_newBallPos + m_newBallDirection, glm::vec4(1, 1, 1, 1));
+	}
+	if (input->wasMouseButtonPressed(1))
+	{
+		m_newBallPos = mousePos;
+		m_newBallDirection = glm::vec2(0, 0);
+		m_m2Pressed = true;
 	}
 
 	// exit the application
@@ -157,7 +184,12 @@ void Application2D::draw()
 
 	mousePos -= glm::vec2(640, 360);
 	mousePos *= (100.0f/640.0f);
-	printf("%f, %f\n", mousePos.x, mousePos.y);
+	static glm::vec2 prevMousePos;
+
+	if (mousePos != prevMousePos)
+		//printf("%f, %f\n", mousePos.x, mousePos.y);
+
+	prevMousePos = mousePos;
 	// done drawing sprites
 	m_2dRenderer->end();
 }

@@ -3,7 +3,7 @@
 #include <glm/ext.hpp>
 #include "CollisionArgs.h"
 
-#define MIN_LINEAR_THRESHOLD 0.1
+#define MIN_LINEAR_THRESHOLD 0.01
 #define MIN_ROTATION_THRESHOLD 0.01
 
 class Rigidbody : public PhysicsObject
@@ -37,6 +37,11 @@ public:
 	void SetElasticity(float elasticity) { m_elasticity = elasticity; }
 	bool GetKinematic() { return m_kinematic; }
 	void SetKinematic(bool kinematic) { m_kinematic = kinematic; }
+	bool GetStationary() { return m_stationary; }
+	float GetStaticFriction() { return m_staticFriction; }
+	void SetStaticFriction(float staticFriction) { m_staticFriction = staticFriction; }
+	float GetDynamicFriction() { return m_dynamicFriction; }
+	void SetDynamicFriction(float dynamicFriction) { m_dynamicFriction = dynamicFriction; }
 
 protected:
 	glm::vec2 m_position;
@@ -48,5 +53,8 @@ protected:
 	float m_angularDrag = 0.0f;
 	float m_elasticity = 1.0f;
 	bool m_kinematic = false;
+	bool m_stationary;
+	float m_staticFriction = 1.0f;
+	float m_dynamicFriction = 0.01f;
 };
 

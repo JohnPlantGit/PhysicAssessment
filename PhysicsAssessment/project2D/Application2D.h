@@ -30,7 +30,12 @@ protected:
 
 	PhysicsScene* m_physicsScene;
 	std::vector<Line*> m_lines;
+
 	bool m_m1Pressed;
 	glm::vec2 m_newLinePos;
 	glm::vec2 m_newLineNormal;
+
+	bool m_m2Pressed;
+	glm::vec2 m_newBallPos;
+	glm::vec2 m_newBallDirection;
 };

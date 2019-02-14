@@ -49,9 +49,12 @@ void Line::ResolveCollision(Rigidbody* other, CollisionArgs cArgs)
 		float elasticity = other->GetElasticity();
 		float j = glm::dot(-(1 + elasticity) * other->GetVelocity(), m_normal) / (1 / other->GetMass());
 
-		glm::vec2 force = m_normal * j;
-
+		glm::vec2 force = m_normal * j;		
+		
 		other->ApplyForce(force);
+		if (glm::length(other->GetVelocity()) > 0)
+			other->SetVelocity(other->GetVelocity() - (other->GetVelocity() * other->GetDynamicFriction() * (1 - glm::dot(glm::normalize(cArgs.m_collisionNormal), glm::normalize(other->GetVelocity())))));
+		
 	}
 	else if (other->GetShape() == SQUARE)
 	{
@@ -61,5 +64,7 @@ void Line::ResolveCollision(Rigidbody* other, CollisionArgs cArgs)
 		glm::vec2 force = m_normal * j;
 
 		other->ApplyForce(force);
+		if (glm::length(other->GetVelocity()) > 0)
+			other->SetVelocity(other->GetVelocity() - (other->GetVelocity() * other->GetDynamicFriction() * (1 - glm::dot(glm::normalize(cArgs.m_collisionNormal), glm::normalize(other->GetVelocity())))));
 	}
 }
