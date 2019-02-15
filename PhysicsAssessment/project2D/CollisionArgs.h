@@ -10,6 +10,7 @@ public:
 	bool m_collided;
 	glm::vec2 m_collisionNormal;
 	glm::vec2 m_normalForce;
+	glm::vec2 m_contactPoint;
 
 };
 

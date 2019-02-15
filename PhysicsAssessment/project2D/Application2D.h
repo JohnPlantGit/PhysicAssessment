@@ -6,6 +6,7 @@
 #include <vector>
 
 class Line;
+class Spring;
 
 class Application2D : public aie::Application 
 {
@@ -38,4 +39,6 @@ protected:
 	bool m_m2Pressed;
 	glm::vec2 m_newBallPos;
 	glm::vec2 m_newBallDirection;
+
+	Spring* mouseSpring;
 };

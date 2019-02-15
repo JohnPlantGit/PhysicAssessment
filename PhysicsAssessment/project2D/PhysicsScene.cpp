@@ -35,6 +35,7 @@ bool PhysicsScene::RemoveActor(PhysicsObject* actor)
 	{
 		if (m_actors[i] == actor)
 		{
+			delete m_actors[i]; 
 			m_actors.erase(m_actors.begin() + i);
 			return true;
 		}
@@ -92,6 +93,38 @@ void PhysicsScene::UpdateGizmos()
 	}
 }
 
+std::vector<PhysicsObject*> PhysicsScene::CheckPoint(glm::vec2 pos)
+{
+	std::vector<PhysicsObject*> objectsHit;
+	for (int i = 0; i < m_actors.size(); i++)
+	{
+		if (m_actors[i]->GetShape() == CIRCLE)
+		{
+			if (Point2Circle(pos, m_actors[i]))
+				objectsHit.push_back(m_actors[i]);
+		}
+		if (m_actors[i]->GetShape() == SQUARE)
+		{
+			if (Point2Square(pos, m_actors[i]))
+				objectsHit.push_back(m_actors[i]);
+		}
+	}
+
+	return objectsHit;
+}
+
+bool PhysicsScene::Point2Circle(glm::vec2 pos, PhysicsObject* obj)
+{
+	Circle* circle = dynamic_cast<Circle*>(obj);
+	return glm::length(pos - circle->GetPosition()) < circle->GetRadius();
+}
+
+bool PhysicsScene::Point2Square(glm::vec2 pos, PhysicsObject* obj)
+{
+	Square* square = dynamic_cast<Square*>(obj);
+	return glm::all(glm::greaterThan(pos, square->GetMin())) && glm::all(glm::lessThan(pos, square->GetMax()));
+}
+
 typedef CollisionArgs(*fn)(PhysicsObject* a, PhysicsObject* b);
 
 static fn CollisionFunctionArray[] =
@@ -124,6 +157,9 @@ void PhysicsScene::CheckCollision()
 			PhysicsObject* b = m_actors[inner];
 			int shapeIdA = a->GetShape();
 			int shapeIdB = b->GetShape();
+
+			if (shapeIdA < 0 || shapeIdB < 0)
+				continue;
 
 			int functionId = (shapeIdA * SHAPE_COUNT) + shapeIdB;
 			fn collisionFunctionPtr = CollisionFunctionArray[functionId];
@@ -161,19 +197,19 @@ CollisionArgs PhysicsScene::Line2Square(PhysicsObject* a, PhysicsObject* b)
 	glm::vec2 squareMin = square->GetMinRelative();
 	glm::vec2 squareMax = square->GetMaxRelative();
 
-	glm::vec2 corners[4] =
+	glm::vec2 squareCorners[4] =
 	{
-		glm::vec2(squarePos + glm::vec2(squareMin.x, squareMax.y)),
-		glm::vec2(squarePos + squareMax),
-		glm::vec2(squarePos + glm::vec2(squareMax.x, squareMin.y)),
-		glm::vec2(squarePos + squareMin),
+		square->GetMin() * square->GetRotationMaxtrix(),
+		glm::vec2(square->GetMin().x, square->GetMax().y) * square->GetRotationMaxtrix(),
+		square->GetMax() * square->GetRotationMaxtrix(),
+		glm::vec2(square->GetMax().x, square->GetMin().y) * square->GetRotationMaxtrix(),
 	};
 
 	glm::vec2 collisionNormal = line->GetNormal();
 	float cornersToLine[4];
 	for (int i = 0; i < 4; i++)
 	{
-		cornersToLine[i] = glm::dot(corners[i], line->GetNormal()) - line->GetDistance();
+		cornersToLine[i] = glm::dot(squareCorners[i], line->GetNormal()) - line->GetDistance();
 	}
 
 	int inFront = 0;
@@ -204,6 +240,23 @@ CollisionArgs PhysicsScene::Line2Square(PhysicsObject* a, PhysicsObject* b)
 	{
 		output.m_collided = true;
 		output.m_collisionNormal = collisionNormal;
+		glm::vec2 contact(0, 0);
+		int count = 0;
+		for (int i = 0; i < 4; i++)
+		{
+			if (overlap < 0 && cornersToLine[i] < 0)
+			{
+				contact += squareCorners[i];
+				count++;
+			}
+			if (overlap > 0 && cornersToLine[i] > 0)
+			{
+				contact += squareCorners[i];
+				count++;
+			}
+		}
+		contact = contact / (float)count;
+		output.m_contactPoint = (contact - (overlap * collisionNormal)) - square->GetPosition();
 
 		square->SetPosition(square->GetPosition() - (overlap * collisionNormal));
 
@@ -242,6 +295,7 @@ CollisionArgs PhysicsScene::Circle2Line(PhysicsObject* a, PhysicsObject* b)
 
 			glm::vec2 normalForce = (collisionNormal * fabsf(glm::dot(collisionNormal, m_gravity)));
 			output.m_normalForce = normalForce;
+			output.m_contactPoint = circle->GetPosition() + (collisionNormal * -circle->GetRadius());
 
 			line->ResolveCollision(circle, output);
 			return output;
@@ -284,6 +338,7 @@ CollisionArgs PhysicsScene::Circle2Circle(PhysicsObject* a, PhysicsObject* b)
 
 			output.m_collided = true;
 			output.m_collisionNormal = normal;
+			output.m_contactPoint = 0.5f * (circleA->GetPosition() + circleB->GetPosition());
 
 			circleA->ResolveCollision(circleB, output);
 

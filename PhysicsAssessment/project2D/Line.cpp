@@ -51,9 +51,11 @@ void Line::ResolveCollision(Rigidbody* other, CollisionArgs cArgs)
 
 		glm::vec2 force = m_normal * j;		
 		
-		other->ApplyForce(force);
+		other->ApplyForce(force, cArgs.m_contactPoint - other->GetPosition());
 		if (glm::length(other->GetVelocity()) > 0)
 			other->SetVelocity(other->GetVelocity() - (other->GetVelocity() * other->GetDynamicFriction() * (1 - glm::dot(glm::normalize(cArgs.m_collisionNormal), glm::normalize(other->GetVelocity())))));
+		if (fabsf(other->GetAngularVelocity()) > 0)
+			other->SetAngularVelocity(other->GetAngularVelocity() - (other->GetAngularVelocity() * other->GetDynamicFriction()) * (1 - glm::dot(glm::normalize(cArgs.m_collisionNormal), glm::normalize(other->GetVelocity()))));	
 		
 	}
 	else if (other->GetShape() == SQUARE)
@@ -63,7 +65,7 @@ void Line::ResolveCollision(Rigidbody* other, CollisionArgs cArgs)
 
 		glm::vec2 force = m_normal * j;
 
-		other->ApplyForce(force);
+		other->ApplyForce(force, glm::vec2(0,0));
 		if (glm::length(other->GetVelocity()) > 0)
 			other->SetVelocity(other->GetVelocity() - (other->GetVelocity() * other->GetDynamicFriction() * (1 - glm::dot(glm::normalize(cArgs.m_collisionNormal), glm::normalize(other->GetVelocity())))));
 	}

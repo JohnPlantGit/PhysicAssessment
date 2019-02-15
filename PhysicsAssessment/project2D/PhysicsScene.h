@@ -21,6 +21,10 @@ public:
 	void SetTimeStep(const float timeStep) { m_timeStep = timeStep; }
 	float GetTimeStep() const { return m_timeStep; }
 
+	std::vector<PhysicsObject*> CheckPoint(glm::vec2 pos);
+	bool Point2Circle(glm::vec2 pos, PhysicsObject* obj);
+	bool Point2Square(glm::vec2 pos, PhysicsObject* obj);
+	
 	void CheckCollision();
 
 	static CollisionArgs Line2Line(PhysicsObject* a, PhysicsObject* b);
@@ -33,9 +37,8 @@ public:
 	static CollisionArgs Square2Circle(PhysicsObject* a, PhysicsObject* b);
 	static CollisionArgs Square2Square(PhysicsObject* a, PhysicsObject* b);
 
-	
-
 protected:
+
 	static glm::vec2 m_gravity;
 	float m_timeStep;
 	std::vector<PhysicsObject*> m_actors;

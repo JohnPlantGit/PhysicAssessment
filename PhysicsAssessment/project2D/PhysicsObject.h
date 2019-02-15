@@ -4,6 +4,7 @@
 #define SHAPE_COUNT 3
 enum ShapeType
 {
+	SPRING = -1,
 	LINE = 0,
 	CIRCLE,
 	SQUARE
