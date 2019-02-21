@@ -3,6 +3,7 @@
 #include <vector>
 class CollisionArgs;
 class PhysicsObject;
+class LengthConstraint;
 
 class PhysicsScene
 {
@@ -11,6 +12,7 @@ public:
 	~PhysicsScene();
 
 	void AddActor(PhysicsObject* actor);
+	void AddConstraint(LengthConstraint* constraint);
 	bool RemoveActor(PhysicsObject* actor);
 	void Update(float deltaTime);
 	void UpdateGizmos();
@@ -42,5 +44,7 @@ protected:
 	static glm::vec2 m_gravity;
 	float m_timeStep;
 	std::vector<PhysicsObject*> m_actors;
+	std::vector<LengthConstraint*> m_constraints;
+	int m_constraintIterations = 10;
 };
 

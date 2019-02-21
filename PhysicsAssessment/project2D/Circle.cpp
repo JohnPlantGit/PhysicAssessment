@@ -35,18 +35,18 @@ bool Circle::CheckCollision(PhysicsObject* other)
 	return false;
 }
 
-//void Circle::ResolveCollision(Rigidbody* other, CollisionArgs cArgs)
-//{
-//	if (other->GetShape() == CIRCLE)
-//	{
-//		glm::vec2 normal = -cArgs.m_collisionNormal;
-//		glm::vec2 relativeVelocity = other->GetVelocity() - m_velocity;
-//
-//		float elasticity = (m_elasticity + other->GetElasticity()) / 2;
-//		float j = glm::dot(-(1 + elasticity) * relativeVelocity, normal) / glm::dot(normal, normal * ((m_kinematic ? 0 : (1 / m_mass)) + (1 / other->GetMass())));
-//
-//		glm::vec2 force = normal * j;
-//
-//		ApplyForceToActor(other, force);
-//	}
-//}
+void Circle::ResolveCollision(Rigidbody* other, CollisionArgs cArgs)
+{
+	if (other->GetShape() == CIRCLE)
+	{
+		glm::vec2 normal = -cArgs.m_collisionNormal;
+		glm::vec2 relativeVelocity = other->GetVelocity() - m_velocity;
+
+		float elasticity = (m_elasticity + other->GetElasticity()) / 2;
+		float j = glm::dot(-(1 + elasticity) * relativeVelocity, normal) / glm::dot(normal, normal * ((m_kinematic ? 0 : (1 / m_mass)) + (1 / other->GetMass())));
+
+		glm::vec2 force = normal * j;
+
+		ApplyForceToActor(other, force, glm::vec2(0,0));
+	}
+}

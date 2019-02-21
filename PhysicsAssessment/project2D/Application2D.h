@@ -40,5 +40,6 @@ protected:
 	glm::vec2 m_newBallPos;
 	glm::vec2 m_newBallDirection;
 
-	Spring* mouseSpring;
+	Spring* mouseSpring1;
+	Spring* mouseSpring2;
 };

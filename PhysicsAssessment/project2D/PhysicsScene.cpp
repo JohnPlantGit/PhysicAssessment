@@ -8,11 +8,12 @@
 #include "Square.h"
 #include "CollisionArgs.h"
 #include <math.h>
+#include "LengthConstraint.h"
 
 
 glm::vec2 PhysicsScene::m_gravity = (glm::vec2(0, 0));
 
-PhysicsScene::PhysicsScene() : m_timeStep(0.01f) 
+PhysicsScene::PhysicsScene() : m_timeStep(0.02f) 
 {
 }
 
@@ -22,11 +23,20 @@ PhysicsScene::~PhysicsScene()
 	{
 		delete actor;
 	}
+	for (auto constraint : m_constraints)
+	{
+		delete constraint;
+	}
 }
 
 void PhysicsScene::AddActor(PhysicsObject* actor)
 {
 	m_actors.push_back(actor);
+}
+
+void PhysicsScene::AddConstraint(LengthConstraint* constraint)
+{
+	m_constraints.push_back(constraint);
 }
 
 bool PhysicsScene::RemoveActor(PhysicsObject* actor)
@@ -53,6 +63,7 @@ void PhysicsScene::Update(float deltaTime)
 
 	while (accumulatedTime >= m_timeStep)
 	{
+		clock_t start = clock();
 		for (auto actor : m_actors)
 		{
 			actor->FixedUpdate(m_gravity, m_timeStep);
@@ -60,6 +71,13 @@ void PhysicsScene::Update(float deltaTime)
 
 		accumulatedTime -= m_timeStep;
 
+		for (int i = 0; i < m_constraintIterations; i++)
+		{
+			for (auto constraint : m_constraints)
+			{
+				constraint->SatisfyConstraint();
+			}
+		}
 		/*for (auto actor : m_actors)
 		{
 			for (auto otherActor : m_actors)
@@ -82,6 +100,8 @@ void PhysicsScene::Update(float deltaTime)
 		dirty.clear();*/
 
 		CheckCollision();
+
+		printf("Time taken: %.2fs\n", (double)(clock() - start) / CLOCKS_PER_SEC);
 	}
 }
 
@@ -288,7 +308,7 @@ CollisionArgs PhysicsScene::Circle2Line(PhysicsObject* a, PhysicsObject* b)
 		float intersection = circle->GetRadius() - circleToLine;
 		if (intersection > 0)
 		{
-			circle->SetPosition(circle->GetPosition() + (collisionNormal * intersection));
+   			circle->SetPosition(circle->GetPosition() + (collisionNormal * intersection));
 
 			output.m_collided = true;
 			output.m_collisionNormal = collisionNormal;

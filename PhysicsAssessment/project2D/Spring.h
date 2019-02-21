@@ -6,7 +6,7 @@ class Rigidbody;
 class Spring : public PhysicsObject
 {
 public:
-	Spring(Rigidbody* rb1, Rigidbody* rb2, float restLength, float springCoefficient, float damping = 0,
+	Spring(Rigidbody* rb1, Rigidbody* rb2, float restLength, float springCoefficient, float damping = -1,
 		glm::vec2 contact1 = glm::vec2(0, 0), glm::vec2 contact2 = glm::vec2(0, 0));
 	~Spring();
 
@@ -16,6 +16,7 @@ public:
 
 	void SetContact2(glm::vec2 pos) { m_contact2 = pos; }
 
+	bool m_draw = true;
 protected:
 	Rigidbody* m_body1;
 	Rigidbody* m_body2;

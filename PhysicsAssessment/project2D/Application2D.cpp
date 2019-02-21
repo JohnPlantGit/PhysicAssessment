@@ -8,6 +8,7 @@
 #include "Square.h"
 #include <math.h>
 #include "Spring.h"
+#include "LengthConstraint.h"
 
 Application2D::Application2D() 
 {
@@ -32,51 +33,129 @@ bool Application2D::startup()
 	m_physicsScene = new PhysicsScene();
 	m_physicsScene->SetGravity(glm::vec2(0, -100));
 
-	Circle* ball = new Circle(glm::vec2(40, 5), glm::vec2(0, 0), 2, 2, glm::vec4(0, 1, 0, 1));
-	ball->SetElasticity(0.0f);
-	ball->SetLinearDrag(0.3f);
+	//Circle* ball = new Circle(glm::vec2(40, 5), glm::vec2(0, 0), 2, 2, glm::vec4(0, 1, 0, 1));
+	//ball->SetElasticity(0.0f);
+	//ball->SetLinearDrag(0.3f);
 	//ball->SetKinematic(true);
-	Circle* ball2 = new Circle(glm::vec2(50, 5), glm::vec2(0, 0), 2, 2, glm::vec4(1, 0, 0, 1));
-	ball2->SetElasticity(0.3f);
-	ball2->SetLinearDrag(0.3f);
+	//Circle* ball2 = new Circle(glm::vec2(50, 5), glm::vec2(0, 0), 2, 2, glm::vec4(1, 0, 0, 1));
+	//ball2->SetElasticity(0.3f);
+	//ball2->SetLinearDrag(0.3f);
 
-	Spring* spring1 = new Spring(ball, ball2, 15, 1);
-	m_physicsScene->AddActor(spring1);
+	//Spring* spring1 = new Spring(ball, ball2, 15, 1);
+	//m_physicsScene->AddActor(spring1);
 
-	mouseSpring = new Spring(ball, nullptr, 5, 0.5);
+	//mouseSpring = new Spring(ball, nullptr, 5, 0.5);
+	//aie::Input* input = aie::Input::getInstance();
+	//glm::vec2 mousePos(input->getMouseX(), input->getMouseY());
+	//mousePos -= glm::vec2(640, 360);
+	//mousePos *= (100.0f / 640.0f);
+	//mouseSpring->SetContact2(mousePos);
+	////m_physicsScene->AddActor(mouseSpring);
+
+	//Circle* tl = new Circle(glm::vec2(-10, 10), glm::vec2(0, 0), 2, 2, glm::vec4(1, 1, 1, 1));
+	//Circle* tr = new Circle(glm::vec2(10, 10), glm::vec2(0, 0), 2, 2, glm::vec4(1, 1, 1, 1));
+	//Circle* br = new Circle(glm::vec2(10, -10), glm::vec2(0, 0), 2, 2, glm::vec4(1, 1, 1, 1));
+	//Circle* bl = new Circle(glm::vec2(-10, -10), glm::vec2(0, 0), 2, 2, glm::vec4(1, 1, 1, 1));
+
+	//// structural
+	//Spring* tl2tr = new Spring(tl, tr, 20, 5);
+	//Spring* tr2br = new Spring(tr, br, 20, 5);
+	//Spring* br2bl = new Spring(br, bl, 20, 5);
+	//Spring* bl2tl = new Spring(bl, tl, 20, 5);
+	//// shear							   5
+	//Spring* tl2br = new Spring(tl, br, 28, 5);
+	//Spring* tr2bl = new Spring(tr, bl, 28, 5);
+
+	//m_physicsScene->AddActor(tl);
+	//m_physicsScene->AddActor(tr);
+	//m_physicsScene->AddActor(br);
+	//m_physicsScene->AddActor(bl);
+
+	//m_physicsScene->AddActor(tl2tr);
+	//m_physicsScene->AddActor(tr2br);
+	//m_physicsScene->AddActor(br2bl);
+	//m_physicsScene->AddActor(bl2tl);
+
+	//m_physicsScene->AddActor(tl2br);
+	//m_physicsScene->AddActor(tr2bl);
+
+	const int size = 5;
+	glm::vec2 startPos(-20, 20);
+	Circle* softBody[size][size];
+
+	for (int x = 0; x < size; x++)
+	{
+		for (int y = 0; y < size; y++)
+		{
+			softBody[x][y] = new Circle(glm::vec2(startPos.x + 8 * x, startPos.y - 8 * y), glm::vec2(0, 0), 2, 1, glm::vec4(1, 1, 1, 1));
+			m_physicsScene->AddActor(softBody[x][y]);
+		}
+	}
+
+	//softBody[0][0]->SetKinematic(true);
+	//softBody[size - 1][0]->SetKinematic(true);
+
 	aie::Input* input = aie::Input::getInstance();
 	glm::vec2 mousePos(input->getMouseX(), input->getMouseY());
 	mousePos -= glm::vec2(640, 360);
 	mousePos *= (100.0f / 640.0f);
-	mouseSpring->SetContact2(mousePos);
-	//m_physicsScene->AddActor(mouseSpring);
+	mouseSpring1 = new Spring(softBody[0][0], nullptr, 5, 0.5);
+	mouseSpring1->SetContact2(softBody[0][0]->GetPosition());
+	m_physicsScene->AddActor(mouseSpring1);
+	mouseSpring2 = new Spring(softBody[size - 1][0], nullptr, 5, 0.5);
+	mouseSpring2->SetContact2(softBody[size - 1][0]->GetPosition());
+	m_physicsScene->AddActor(mouseSpring2);
 
-	Circle* tl = new Circle(glm::vec2(-10, 10), glm::vec2(0, 0), 2, 2, glm::vec4(1, 1, 1, 1));
-	Circle* tr = new Circle(glm::vec2(10, 10), glm::vec2(0, 0), 2, 2, glm::vec4(1, 1, 1, 1));
-	Circle* br = new Circle(glm::vec2(10, -10), glm::vec2(0, 0), 2, 2, glm::vec4(1, 1, 1, 1));
-	Circle* bl = new Circle(glm::vec2(-10, -10), glm::vec2(0, 0), 2, 2, glm::vec4(1, 1, 1, 1));
+	float structuralCoefficient = 1;
+	float shearCoefficient = 1;
+	float bendCoefficient = 1;
 
-	// structural
-	Spring* tl2tr = new Spring(tl, tr, 10, 50);
-	Spring* tr2br = new Spring(tr, br, 10, 50);
-	Spring* br2bl = new Spring(br, bl, 10, 50);
-	Spring* bl2tl = new Spring(bl, tl, 10, 50);
-	// shear							   
-	Spring* tl2br = new Spring(tl, br, 14, 50);
-	Spring* tr2bl = new Spring(tr, bl, 14, 50);
+	for (int x = 0; x < size; x++)
+	{
+		for (int y = 0; y < size; y++)
+		{
+			if (x < size - 1)
+			{
+				Spring* structuralX = new Spring(softBody[x][y], softBody[x + 1][y], 8, structuralCoefficient);
+				//LengthConstraint* constraint = new LengthConstraint(softBody[x][y], softBody[x + 1][y], 8);
+				m_physicsScene->AddActor(structuralX);
+				//m_physicsScene->AddConstraint(constraint);
+			}
+			if (y < size - 1)
+			{
+				Spring* structuralY = new Spring(softBody[x][y], softBody[x][y + 1], 8, structuralCoefficient);
+				//LengthConstraint* constraint = new LengthConstraint(softBody[x][y], softBody[x][y + 1], 8);
+				m_physicsScene->AddActor(structuralY);
+				//m_physicsScene->AddConstraint(constraint);
+			}
 
-	m_physicsScene->AddActor(tl);
-	m_physicsScene->AddActor(tr);
-	m_physicsScene->AddActor(br);
-	m_physicsScene->AddActor(bl);
+			if (x < size - 1 && y < size - 1)
+			{
+				Spring* shear = new Spring(softBody[x][y], softBody[x + 1][y + 1], 11.31, shearCoefficient);
+				m_physicsScene->AddActor(shear);
+				shear->m_draw = false;
+			}
+			if (x < size - 1 && y > 0)
+			{
+				Spring* shear = new Spring(softBody[x][y], softBody[x + 1][y - 1], 11.31, shearCoefficient);
+				m_physicsScene->AddActor(shear);
+				shear->m_draw = false;
+			}
 
-	m_physicsScene->AddActor(tl2tr);
-	m_physicsScene->AddActor(tr2br);
-	m_physicsScene->AddActor(br2bl);
-	m_physicsScene->AddActor(bl2tl);
-
-	m_physicsScene->AddActor(tl2br);
-	m_physicsScene->AddActor(tr2bl);
+			if (y != 0 && y % 2 == 0)
+			{
+				Spring* bend = new Spring(softBody[x][y], softBody[x][y - 2], 16, bendCoefficient);
+				m_physicsScene->AddActor(bend);
+				bend->m_draw = false;
+			}
+			if (x != 0 && x % 2 == 0)
+			{
+				Spring* bend = new Spring(softBody[x][y], softBody[x - 2][y], 16, bendCoefficient);
+				m_physicsScene->AddActor(bend);
+				bend->m_draw = false;
+			}
+		}
+	}
 
 	
 	Line* line1 = new Line(glm::vec2(0, -1), -50);
@@ -84,8 +163,8 @@ bool Application2D::startup()
 	Line* line3 = new Line(glm::vec2(-1, 0), -90);
 	Line* line4 = new Line(glm::vec2(1, 0), -90);
 	Line* line5 = new Line(glm::normalize(glm::vec2(-2, - 1)), 50);
-	m_physicsScene->AddActor(ball);
-	m_physicsScene->AddActor(ball2);
+	//m_physicsScene->AddActor(ball);
+	//m_physicsScene->AddActor(ball2);
 	m_physicsScene->AddActor(line1);
 	m_physicsScene->AddActor(line2);
 	m_physicsScene->AddActor(line3);
@@ -141,7 +220,12 @@ void Application2D::update(float deltaTime)
 	glm::vec2 mousePos(input->getMouseX(), input->getMouseY());
 	mousePos -= glm::vec2(640, 360);
 	mousePos *= (100.0f / 640.0f);
-	mouseSpring->SetContact2(mousePos);
+	//mouseSpring->SetContact2(mousePos);
+	if (input->isKeyDown(aie::INPUT_KEY_SPACE))
+	{
+		mouseSpring1->SetContact2(mousePos);
+		mouseSpring2->SetContact2(mousePos + glm::vec2(20,0));
+	}
 
 	if (input->isKeyDown(aie::INPUT_KEY_LEFT_SHIFT))
 	{
@@ -197,7 +281,7 @@ void Application2D::update(float deltaTime)
 	if (input->wasMouseButtonReleased(1) && m_m2Pressed)
 	{
 		Circle* newball = new Circle(m_newBallPos, m_newBallDirection, 2, 2, glm::vec4(1, 1, 1, 1));
-		newball->SetElasticity(0.0f);
+		newball->SetElasticity(1);
 		m_physicsScene->AddActor(newball);
 	}
 	if (input->isMouseButtonDown(1) && m_m2Pressed)
