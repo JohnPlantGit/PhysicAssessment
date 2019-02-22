@@ -1,13 +1,14 @@
 #pragma once
 #include <glm/ext.hpp>
 
-#define SHAPE_COUNT 3
+#define SHAPE_COUNT 4
 enum ShapeType
 {
 	SPRING = -1,
 	LINE = 0,
 	CIRCLE,
-	SQUARE
+	SQUARE,
+	CUSTOM
 };
 
 class PhysicsObject
@@ -16,6 +17,7 @@ public:
 	PhysicsObject(ShapeType shape);
 	~PhysicsObject();
 
+	// 
 	virtual void FixedUpdate(glm::vec2 gravity, float timeStep) = 0;
 	virtual void Debug() = 0;
 	virtual void MakeGizmo() = 0;

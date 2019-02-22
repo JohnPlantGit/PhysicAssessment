@@ -7,7 +7,6 @@ public:
 	~Circle();
 
 	virtual void MakeGizmo();
-	virtual bool CheckCollision(PhysicsObject* other);
 	virtual void ResolveCollision(Rigidbody* other, CollisionArgs cArgs);
 
 	float GetRadius() { return m_radius; }

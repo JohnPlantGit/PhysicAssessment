@@ -9,27 +9,51 @@
 class Rigidbody : public PhysicsObject
 {
 public:
+	// Constructor 
+	// Params:
+	//		shape : the shape of the rigid body in the ShapeType enum
+	//		position : the starting position of the rigid body
+	//		velocity : the starting velocity of the rigid body
+	//		mass : the mass of the rigid body
+	//		rotation : the initial rotation of the rigidbody
 	Rigidbody(ShapeType shape, glm::vec2 position, glm::vec2 velocity, float mass, float rotation);
 	~Rigidbody();
 
+	// handles the basic momentum and gravity for the rigidbody
+	// params: 
+	//		gravity : the direction and magnitude of gravity to apply on the rigidbody
+	//		timeStep : the timestep being used by the physics scene
 	virtual void FixedUpdate(glm::vec2 gravity, float timeStep);
 	virtual void Debug();
 
+	// Applies a force to the rigid body
+	// Params:
+	//		force : the force vector to be applied
+	//		pos : the position to apply force at (used for rotational force)
 	void ApplyForce(glm::vec2 force, glm::vec2 pos);
+	// Applies a force to another rigidbody and applies an equal and opposite force to the current rigidbody
+	// Params:
+	//		other : the other rigidbody to apply force to
+	//		force : the force vector to be applied
+	//		pos : the position to apply force at (used for rotational force)
 	void ApplyForceToActor(Rigidbody* other, glm::vec2 force, glm::vec2 pos);
 
-	virtual bool CheckCollision(PhysicsObject* other) = 0;
+	// Resolve a collision between two rigidbodies
+	// Params:
+	//		other : the other rigidbody involved in the collision
+	//		cArgs : the collision arguments from the collision system
 	virtual void ResolveCollision(Rigidbody* other, CollisionArgs cArgs);
 
+	// Getters and setters for the rigid body variables
 	glm::vec2 GetPosition() { return m_position; }
+	void SetPosition(glm::vec2 position) { m_position = position; }
 	glm::vec2 GetVelocity() { return m_velocity; }
+	void SetVelocity(glm::vec2 velocity) { m_velocity = velocity; }
 	float GetAngularVelocity() { return m_angularVelocity; }
+	void SetAngularVelocity(float angularVelocity) { m_angularVelocity = angularVelocity; }
+
 	float GetMass() { return m_mass; }
 	float GetRotation() { return m_rotation; }
-
-	void SetPosition(glm::vec2 position) { m_position = position; }
-	void SetVelocity(glm::vec2 velocity) { m_velocity = velocity; }
-	void SetAngularVelocity(float angularVelocity) { m_angularVelocity = angularVelocity; }
 
 	float GetLinearDrag() { return m_linearDrag; }
 	void SetLinearDrag(float linearDrag) { m_linearDrag = linearDrag; }
@@ -46,6 +70,7 @@ public:
 	void SetDynamicFriction(float dynamicFriction) { m_dynamicFriction = dynamicFriction; }
 
 	float GetMoment() { return m_moment; }
+	//
 
 protected:
 	glm::vec2 m_position;

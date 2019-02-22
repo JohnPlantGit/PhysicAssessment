@@ -20,21 +20,6 @@ void Circle::MakeGizmo()
 	aie::Gizmos::add2DLine(m_position, m_position + edge, glm::vec4(0, 0, 0, 1));
 }
 
-bool Circle::CheckCollision(PhysicsObject* other)
-{
-	if (other->GetShape() == CIRCLE)
-	{
-		Circle* castOther = dynamic_cast<Circle*>(other);
-		int length = glm::length(castOther->GetPosition() - GetPosition());
-		if (length < (castOther->GetRadius() + m_radius))
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
 void Circle::ResolveCollision(Rigidbody* other, CollisionArgs cArgs)
 {
 	if (other->GetShape() == CIRCLE)

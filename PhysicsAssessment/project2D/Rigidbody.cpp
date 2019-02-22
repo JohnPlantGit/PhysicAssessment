@@ -1,6 +1,8 @@
 #include "Rigidbody.h"
 #include <stdio.h>
 
+// Initializes the rigidbody variables to the constructor parameters
+// passes the shape into the physicsObject constructor
 Rigidbody::Rigidbody(ShapeType shape, glm::vec2 position, glm::vec2 velocity, float mass, float rotation) : PhysicsObject(shape)
 {
 	m_position = position;
@@ -13,15 +15,18 @@ Rigidbody::~Rigidbody()
 {
 }
 
+// Updates the angular and linear velocity, the position and rotation and applies gravity to the rigid body 
 void Rigidbody::FixedUpdate(glm::vec2 gravity, float timeStep)
 {
 	if (!m_kinematic)
 	{
-		ApplyForce(gravity * m_mass * timeStep, glm::vec2(0, 0));
+		ApplyForce(gravity * m_mass * timeStep, glm::vec2(0, 0)); // apply the gravity to the center of mass
 
+		// slows down the velocity of the object acording to a portion of the current velocity defined by the drag variables
 		m_velocity -= m_velocity * m_linearDrag * timeStep;
 		m_angularVelocity -= m_angularVelocity * m_angularDrag * timeStep;
 
+		// when the magnitude of the velocity reaches the defined minimum set the velocity to 0
 		if (glm::length(m_velocity) < MIN_LINEAR_THRESHOLD)
 		{
 			m_velocity = glm::vec2(0, 0);
@@ -37,6 +42,7 @@ void Rigidbody::FixedUpdate(glm::vec2 gravity, float timeStep)
 			m_angularVelocity = 0;
 		}
 
+		// move and rotate the rigidbody according to the current angular and linear velocity
 		m_rotation += m_angularVelocity * timeStep;
 		m_position += m_velocity * timeStep;
 
@@ -49,16 +55,19 @@ void Rigidbody::Debug()
 
 }
 
+// Adds the instantanious acceleration to the velocity according to the equation F = ma
 void Rigidbody::ApplyForce(glm::vec2 force, glm::vec2 pos)
 {
 	if (!m_kinematic)
 	{
 		m_velocity += (force / m_mass);
 
-		m_angularVelocity += ((force.y * pos.x) + (force.x * pos.y)) / m_moment;
+		m_angularVelocity += (((force.y * pos.x) - (force.x * pos.y)) / m_moment);
 	}
 }
 
+// calls the apply force function on the other actor using the force param
+// calls the apply force function on the current actor using the opposite force
 void Rigidbody::ApplyForceToActor(Rigidbody* other, glm::vec2 force, glm::vec2 pos)
 {
 	other->ApplyForce(force, pos);

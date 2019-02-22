@@ -32,12 +32,15 @@ public:
 	static CollisionArgs Line2Line(PhysicsObject* a, PhysicsObject* b);
 	static CollisionArgs Line2Circle(PhysicsObject* a, PhysicsObject* b);
 	static CollisionArgs Line2Square(PhysicsObject* a, PhysicsObject* b);
+	static CollisionArgs Line2Custom(PhysicsObject* a, PhysicsObject* b);
 	static CollisionArgs Circle2Line(PhysicsObject* a, PhysicsObject* b);
 	static CollisionArgs Circle2Circle(PhysicsObject* a, PhysicsObject* b);
 	static CollisionArgs Circle2Square(PhysicsObject* a, PhysicsObject* b);
+	static CollisionArgs Circle2Custom(PhysicsObject* a, PhysicsObject* b);
 	static CollisionArgs Square2Line(PhysicsObject* a, PhysicsObject* b);
 	static CollisionArgs Square2Circle(PhysicsObject* a, PhysicsObject* b);
 	static CollisionArgs Square2Square(PhysicsObject* a, PhysicsObject* b);
+	static CollisionArgs Square2Custom(PhysicsObject* a, PhysicsObject* b);
 
 protected:
 

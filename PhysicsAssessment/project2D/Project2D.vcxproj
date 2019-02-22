@@ -166,6 +166,7 @@
     <ClCompile Include="Application2D.cpp" />
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="CollisionArgs.cpp" />
+    <ClCompile Include="CustomShape.cpp" />
     <ClCompile Include="LengthConstraint.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="main.cpp" />
@@ -179,6 +180,7 @@
     <ClInclude Include="Application2D.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="CollisionArgs.h" />
+    <ClInclude Include="CustomShape.h" />
     <ClInclude Include="LengthConstraint.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="PhysicsObject.h" />
