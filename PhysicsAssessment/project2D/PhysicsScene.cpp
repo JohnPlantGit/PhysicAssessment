@@ -317,8 +317,13 @@ CollisionArgs PhysicsScene::Line2Custom(PhysicsObject* a, PhysicsObject* b)
 	CollisionArgs output;
 
 	std::vector<glm::vec2> customPoints = custom->GetPoints();
+	int pointCount = customPoints.size();
 
-	
+	std::vector<float> pointsToLine;
+	for (int i = 0; i < pointCount; i++)
+	{
+
+	}
 
 	
 }
