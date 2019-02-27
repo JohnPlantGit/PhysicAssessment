@@ -167,6 +167,7 @@
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="CollisionArgs.cpp" />
     <ClCompile Include="CustomShape.cpp" />
+    <ClCompile Include="Hexagon.cpp" />
     <ClCompile Include="LengthConstraint.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="main.cpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="Circle.h" />
     <ClInclude Include="CollisionArgs.h" />
     <ClInclude Include="CustomShape.h" />
+    <ClInclude Include="Hexagon.h" />
     <ClInclude Include="LengthConstraint.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="PhysicsObject.h" />

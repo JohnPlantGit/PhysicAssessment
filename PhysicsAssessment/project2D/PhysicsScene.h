@@ -41,6 +41,10 @@ public:
 	static CollisionArgs Square2Circle(PhysicsObject* a, PhysicsObject* b);
 	static CollisionArgs Square2Square(PhysicsObject* a, PhysicsObject* b);
 	static CollisionArgs Square2Custom(PhysicsObject* a, PhysicsObject* b);
+	static CollisionArgs Custom2Line(PhysicsObject* a, PhysicsObject* b);
+	static CollisionArgs Custom2Circle(PhysicsObject* a, PhysicsObject* b);
+	static CollisionArgs Custom2Square(PhysicsObject* a, PhysicsObject* b);
+	static CollisionArgs Custom2Custom(PhysicsObject* a, PhysicsObject* b);
 
 protected:
 

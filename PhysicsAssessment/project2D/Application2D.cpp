@@ -9,6 +9,7 @@
 #include <math.h>
 #include "Spring.h"
 #include "LengthConstraint.h"
+#include "Hexagon.h"
 
 Application2D::Application2D() 
 {
@@ -33,10 +34,9 @@ bool Application2D::startup()
 	m_physicsScene = new PhysicsScene();
 	m_physicsScene->SetGravity(glm::vec2(0, -100));
 
-	//Circle* ball = new Circle(glm::vec2(40, 5), glm::vec2(0, 0), 2, 2, glm::vec4(0, 1, 0, 1));
-	//ball->SetElasticity(0.0f);
-	//ball->SetLinearDrag(0.3f);
-	//ball->SetKinematic(true);
+	Circle* ball = new Circle(glm::vec2(40, 5), glm::vec2(0, 0), 2, 2, glm::vec4(0, 1, 0, 1));
+	ball->SetElasticity(0.0f);
+	ball->SetKinematic(true);
 	//Circle* ball2 = new Circle(glm::vec2(50, 5), glm::vec2(0, 0), 2, 2, glm::vec4(1, 0, 0, 1));
 	//ball2->SetElasticity(0.3f);
 	//ball2->SetLinearDrag(0.3f);
@@ -52,34 +52,7 @@ bool Application2D::startup()
 	//mouseSpring->SetContact2(mousePos);
 	////m_physicsScene->AddActor(mouseSpring);
 
-	//Circle* tl = new Circle(glm::vec2(-10, 10), glm::vec2(0, 0), 2, 2, glm::vec4(1, 1, 1, 1));
-	//Circle* tr = new Circle(glm::vec2(10, 10), glm::vec2(0, 0), 2, 2, glm::vec4(1, 1, 1, 1));
-	//Circle* br = new Circle(glm::vec2(10, -10), glm::vec2(0, 0), 2, 2, glm::vec4(1, 1, 1, 1));
-	//Circle* bl = new Circle(glm::vec2(-10, -10), glm::vec2(0, 0), 2, 2, glm::vec4(1, 1, 1, 1));
-
-	//// structural
-	//Spring* tl2tr = new Spring(tl, tr, 20, 5);
-	//Spring* tr2br = new Spring(tr, br, 20, 5);
-	//Spring* br2bl = new Spring(br, bl, 20, 5);
-	//Spring* bl2tl = new Spring(bl, tl, 20, 5);
-	//// shear							   5
-	//Spring* tl2br = new Spring(tl, br, 28, 5);
-	//Spring* tr2bl = new Spring(tr, bl, 28, 5);
-
-	//m_physicsScene->AddActor(tl);
-	//m_physicsScene->AddActor(tr);
-	//m_physicsScene->AddActor(br);
-	//m_physicsScene->AddActor(bl);
-
-	//m_physicsScene->AddActor(tl2tr);
-	//m_physicsScene->AddActor(tr2br);
-	//m_physicsScene->AddActor(br2bl);
-	//m_physicsScene->AddActor(bl2tl);
-
-	//m_physicsScene->AddActor(tl2br);
-	//m_physicsScene->AddActor(tr2bl);
-
-	const int size = 0;
+	const int size = 4;
 	if (size > 0)
 	{
 		glm::vec2 startPos(-20, 20);
@@ -160,25 +133,25 @@ bool Application2D::startup()
 		}
 	}
 
-	
 	Line* line1 = new Line(glm::vec2(0, -1), -50);
 	Line* line2 = new Line(glm::vec2(0, 1), -50);
 	Line* line3 = new Line(glm::vec2(-1, 0), -90);
 	Line* line4 = new Line(glm::vec2(1, 0), -90);
-	Line* line5 = new Line(glm::normalize(glm::vec2(-2, - 1)), 50);
-	//m_physicsScene->AddActor(ball);
+	Line* line5 = new Line(glm::normalize(glm::vec2(2, 1)), -50);
+	m_physicsScene->AddActor(ball);
 	//m_physicsScene->AddActor(ball2);
 	m_physicsScene->AddActor(line1);
 	m_physicsScene->AddActor(line2);
 	m_physicsScene->AddActor(line3);
 	m_physicsScene->AddActor(line4);
 	m_physicsScene->AddActor(line5);
+	
 
-	Square* square = new Square(glm::vec2(0, 0), glm::vec2(0, 0), 2, 1, 10, 10, glm::vec4(0, 0, 1, 1));
+	Square* square = new Square(glm::vec2(50, 0), glm::vec2(0, 0), 2, 0, 10, 10, glm::vec4(0, 0, 1, 1));
 	square->SetKinematic(true);
 	//square->SetElasticity(0);
 	m_physicsScene->AddActor(square);
-	Square* square2 = new Square(glm::vec2(0, 50), glm::vec2(0, 0), 2, 0, 5, 5, glm::vec4(0, 0, 1, 1));
+	Square* square2 = new Square(glm::vec2(5, 50), glm::vec2(0, 0), 2, 0, 5, 5, glm::vec4(0, 0, 1, 1));
 	//square2->SetElasticity(0);
 	m_physicsScene->AddActor(square2);
 	/*Square* square3 = new Square(glm::vec2(50, 20), glm::vec2(0, -10), 2, 5, 5, glm::vec4(0, 0, 1, 1));
@@ -198,6 +171,12 @@ bool Application2D::startup()
 		Circle* newBall = new Circle(glm::vec2(-40 + i * 3, i * 3), glm::vec2(30, 30), 2.0f, 2, glm::vec4(1, 0, 0, 1));
 		m_physicsScene->AddActor(newBall);
 	}
+
+	Hexagon* hexagon1 = new Hexagon(glm::vec2(50, -30), glm::vec2(0, 0), 1, 0, glm::vec4(1, 0, 0, 1), 5);
+	hexagon1->SetKinematic(true);
+	m_physicsScene->AddActor(hexagon1);
+
+	m_scrollBefore = aie::Input::getInstance()->getMouseScroll();
 
 	return true;
 }
@@ -229,6 +208,19 @@ void Application2D::update(float deltaTime)
 		mouseSpring1->SetContact2(mousePos);
 		mouseSpring2->SetContact2(mousePos + glm::vec2(20,0));
 	}
+
+	if (input->getMouseScroll() > m_scrollBefore)
+	{
+		if (m_selectedShape++ > 0)
+			m_selectedShape = 0;
+	}
+	else if (input->getMouseScroll() < m_scrollBefore)
+	{
+		if (m_selectedShape-- < 1)
+			m_selectedShape = 1;
+	}
+
+	m_scrollBefore = input->getMouseScroll();
 
 	if (input->isKeyDown(aie::INPUT_KEY_LEFT_SHIFT))
 	{
@@ -283,9 +275,18 @@ void Application2D::update(float deltaTime)
 	}
 	if (input->wasMouseButtonReleased(1) && m_m2Pressed)
 	{
-		Circle* newball = new Circle(m_newBallPos, m_newBallDirection, 2, 2, glm::vec4(1, 1, 1, 1));
-		newball->SetElasticity(1);
-		m_physicsScene->AddActor(newball);
+		if (m_selectedShape == 0)
+		{
+			Circle* newball = new Circle(m_newBallPos, m_newBallDirection, 2, 2, glm::vec4(1, 1, 1, 1));
+			newball->SetElasticity(0);
+			m_physicsScene->AddActor(newball);
+		}
+		else if (m_selectedShape == 1)
+		{
+			Square* newSquare = new Square(m_newBallPos, m_newBallDirection, 2, 0, 4, 4, glm::vec4(1, 1, 1, 1));
+			newSquare->SetElasticity(0);
+			m_physicsScene->AddActor(newSquare);
+		}
 	}
 	if (input->isMouseButtonDown(1) && m_m2Pressed)
 	{
@@ -328,6 +329,15 @@ void Application2D::draw()
 
 	aie::Gizmos::add2DLine(glm::vec2(0, 100 / aspectRatio), glm::vec2(0, -100 / aspectRatio), glm::vec4(0, 1, 0, 1));
 	aie::Gizmos::add2DLine(glm::vec2(-100, 0), glm::vec2(100, 0), glm::vec4(1, 0, 0, 1));
+
+	if (m_selectedShape == 0)
+	{
+		aie::Gizmos::add2DCircle(glm::vec2(95, 40), 2, 16, glm::vec4(1, 1, 1, 1));
+	}
+	else if (m_selectedShape == 1)
+	{
+		aie::Gizmos::add2DAABBFilled(glm::vec2(95, 40), glm::vec2(2, 2), glm::vec4(1, 1, 1, 1));
+	}
 
 	/*for (int i = -100; i < 100; i++)
 	{

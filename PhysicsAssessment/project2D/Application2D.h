@@ -32,6 +32,9 @@ protected:
 	PhysicsScene* m_physicsScene;
 	std::vector<Line*> m_lines;
 
+	int m_selectedShape = 0;
+	float m_scrollBefore;
+
 	bool m_m1Pressed;
 	glm::vec2 m_newLinePos;
 	glm::vec2 m_newLineNormal;

@@ -42,16 +42,26 @@ void CustomShape::FixedUpdate(glm::vec2 gravity, float timeStep)
 
 void CustomShape::MakeGizmo()
 {
-	for (int i = 0; i < m_points.size(); i++)
+	std::vector<glm::vec2> points = GetPoints();
+
+	for (int i = 0; i < points.size(); i++)
 	{
-		aie::Gizmos::add2DCircle(m_points[i], 1, 12, m_colour);
-		aie::Gizmos::add2DLine(m_points[i], m_points[(i + 1 < m_points.size() ? i + 1 : 0)], m_colour);
+		aie::Gizmos::add2DCircle(points[i], 1, 12, m_colour);
+		aie::Gizmos::add2DLine(points[i], points[(i + 1 < points.size() ? i + 1 : 0)], m_colour);
 	}
 }
 
 void CustomShape::ResolveCollision(Rigidbody* other, CollisionArgs cArgs)
 {
+	glm::vec2 normal = cArgs.m_collisionNormal;
+	glm::vec2 relativeVelocity = other->GetVelocity() - m_velocity;
 
+	float elasticity = (m_elasticity + other->GetElasticity()) / 2;
+	float j = glm::dot(-(1 + elasticity) * relativeVelocity, normal) / glm::dot(normal, normal * ((m_kinematic ? 0 : (1 / m_mass)) + 1 / other->GetMass()));
+
+	glm::vec2 force = normal * j;
+
+	ApplyForceToActor(other, force, glm::vec2(0, 0));
 }
 
 void CustomShape::UpdateMinMax()
@@ -61,6 +71,7 @@ void CustomShape::UpdateMinMax()
 	std::vector <glm::vec2> points = m_points;
 	for (int i = 0; i < points.size(); i++)
 	{
+		points[i] = (m_rotationMatrix * glm::vec3(points[i].x, points[i].y, 0));
 		points[i] += m_position;
 	}
 
