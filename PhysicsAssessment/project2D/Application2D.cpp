@@ -63,7 +63,7 @@ bool Application2D::startup()
 			for (int y = 0; y < size; y++)
 			{
 				softBody[x][y] = new Circle(glm::vec2(startPos.x + 8 * x, startPos.y - 8 * y), glm::vec2(0, 0), 2, 1, glm::vec4(1, 1, 1, 1));
-				m_physicsScene->AddActor(softBody[x][y]);
+				//m_physicsScene->AddActor(softBody[x][y]);
 			}
 		}
 
@@ -129,6 +129,14 @@ bool Application2D::startup()
 					m_physicsScene->AddActor(bend);
 					bend->m_draw = false;
 				}
+			}
+		}
+
+		for (int x = 0; x < size; x++)
+		{
+			for (int y = 0; y < size; y++)
+			{
+				m_physicsScene->AddActor(softBody[x][y]);
 			}
 		}
 	}

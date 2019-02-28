@@ -25,7 +25,7 @@ void Circle::ResolveCollision(Rigidbody* other, CollisionArgs cArgs)
 {
 	if (other->GetShape() == CIRCLE)
 	{
-		if (glm::dot(m_velocity, other->GetVelocity()) <= 0)
+		//if (glm::dot(m_velocity, other->GetVelocity()) <= 0 || !glm::all(glm::equal(m_velocity, glm::vec2(0,0))) || !glm::all(glm::equal(other->GetVelocity(), glm::vec2(0, 0))))
 		{
 			glm::vec2 normal = -cArgs.m_collisionNormal;
 			glm::vec2 relativeVelocity = other->GetVelocity() - m_velocity;

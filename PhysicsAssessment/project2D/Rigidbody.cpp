@@ -58,9 +58,10 @@ void Rigidbody::Debug()
 // Adds the instantanious acceleration to the velocity according to the equation F = ma
 void Rigidbody::ApplyForce(glm::vec2 force, glm::vec2 pos)
 {
+	// Kinematic bodies can't have force applied to them
 	if (!m_kinematic)
 	{
-		m_velocity += (force / m_mass);
+		m_velocity += (force / m_mass); // a = F/m
 
 		m_angularVelocity += (((force.y * pos.x) - (force.x * pos.y)) / m_moment);
 	}
@@ -74,6 +75,7 @@ void Rigidbody::ApplyForceToActor(Rigidbody* other, glm::vec2 force, glm::vec2 p
 	ApplyForce(-force, pos);
 }
 
+// calculates the collision force and applies it to the other rigidbody, applies the equal and opposite force to the current rigidbody
 void Rigidbody::ResolveCollision(Rigidbody* other, CollisionArgs cArgs)
 {
 	glm::vec2 normal = cArgs.m_collisionNormal;
